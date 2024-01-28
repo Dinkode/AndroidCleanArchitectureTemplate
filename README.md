@@ -2,7 +2,7 @@
 
 Simple clean architecture Android Kotlin template with authentication and home screens
 
-Impleneted:
+Implemented:
 - Jetpack Compose
 - Retrofit
 - Hilt
