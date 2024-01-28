@@ -1,4 +1,4 @@
-package com.example.architecture.items.presentation
+package com.example.architecture.items.presentation.items
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,7 +33,7 @@ fun ItemsScreen(
             { item ->
 
                 Button(onClick = {
-                    navController.navigate("item" + "?id=${5}")
+                    navController.navigate("items/${item.id}")
                 }) {
                     Text(text = item.itemName, style = TextStyle(textAlign = TextAlign.Center, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color.Green))
                 }

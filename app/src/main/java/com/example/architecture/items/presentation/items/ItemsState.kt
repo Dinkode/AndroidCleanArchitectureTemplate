@@ -1,4 +1,4 @@
-package com.example.architecture.items.presentation
+package com.example.architecture.items.presentation.items
 
 import com.example.architecture.items.domain.models.ItemModel
 import com.example.architecture.login.domain.models.UserModel

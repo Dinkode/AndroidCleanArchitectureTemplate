@@ -1,4 +1,4 @@
-package com.example.architecture.items.presentation
+package com.example.architecture.items.presentation.items
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
@@ -14,8 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ItemsViewModel @Inject constructor(
     private val useCases: ItemUseCases,
-    globalState: GlobalState
-): BaseViewModel(globalState) {
+): BaseViewModel() {
     private val _state = mutableStateOf(ItemsState(emptyList(), true))
     val state: State<ItemsState> = _state
 
@@ -23,7 +22,7 @@ class ItemsViewModel @Inject constructor(
         getItems()
     }
 
-    fun getItemsHandler (data: Resource<ItemsDto>) {
+    private fun getItemsHandler (data: Resource<ItemsDto>) {
         when (data) {
             is Resource.Success -> {
                 data.data?.toItemModelMap()?.let {
@@ -40,9 +39,9 @@ class ItemsViewModel @Inject constructor(
         }
     }
 
-    fun getItems () {
+    private fun getItems () {
         viewModelScope.launch {
-            baseRequest({ getItemsHandler(it) }) {
+            baseRequest({ getItemsHandler(it) }, null) {
                 useCases.getItems()
             }
         }

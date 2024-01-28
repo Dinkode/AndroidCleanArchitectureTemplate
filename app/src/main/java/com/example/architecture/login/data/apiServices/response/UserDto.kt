@@ -7,4 +7,4 @@ data class UserDataDto(
     val lastName: String,
     val token: String
 
-)
+) 

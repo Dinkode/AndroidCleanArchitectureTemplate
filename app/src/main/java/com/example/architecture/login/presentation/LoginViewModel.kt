@@ -1,5 +1,6 @@
 package com.example.architecture.login.presentation
 import android.annotation.SuppressLint
+import android.service.autofill.UserData
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +9,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.viewModelScope
 import com.example.architecture.BaseViewModel
 import com.example.architecture.common.utils.TokenManager
+import com.example.architecture.common.utils.UiEvent
 import com.example.architecture.common.utils.UserManager
 import com.example.architecture.login.domain.use_cases.LoginUseCases
 import com.example.architecture.items.domain.utils.Resource
@@ -27,8 +29,7 @@ class LoginViewModel @Inject constructor(
     private val useCases: LoginUseCases,
     private val tokenManager: TokenManager,
     private val userManager: UserManager,
-    globalState: GlobalState
-): BaseViewModel(globalState) {
+): BaseViewModel() {
 
 
     private var _fieldsState = mutableStateMapOf<Fields, String>()
@@ -40,6 +41,12 @@ class LoginViewModel @Inject constructor(
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    suspend fun onError(error: String) {
+        _eventFlow.emit(
+            UiEvent.ShowSnackbar(error)
+        )
+    }
 
     fun onFieldChange(field: Fields, value: String) {
         _fieldsState[field] = value
@@ -61,7 +68,7 @@ class LoginViewModel @Inject constructor(
             is Resource.Error -> {
                 _eventFlow.emit(
                     UiEvent.ShowSnackbar(
-                        message = "Wrong username or password"
+                        data.message ?: ""
                     )
                 )
                 isLoading = false
@@ -74,13 +81,9 @@ class LoginViewModel @Inject constructor(
 
     fun login () {
         viewModelScope.launch {
-            baseRequest({loginHandler(it)}) {
+            baseRequest({loginHandler(it)}, {onError(it)}) {
                 useCases.login(fieldsState[Fields.USERNAME] ?: "", fieldsState[Fields.PASSWORD] ?: "")
             }
         }
-    }
-
-    sealed class UiEvent {
-        data class ShowSnackbar(val message: String): UiEvent()
     }
 }

@@ -20,10 +20,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.architecture.items.presentation.ItemsScreen
+import androidx.navigation.navArgument
+import com.example.architecture.items.presentation.items.ItemsScreen
 import com.example.architecture.items.presentation.item_details.ItemDetailsScreen
 import com.example.architecture.settings.SettingsScreen
 
@@ -72,12 +74,13 @@ fun MainScreens() {
                         ItemsScreen(navController = mainNavController)
                     }
                 }
-                composable("item") {
+                composable("items/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })
+                ) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        ItemDetailsScreen()
+                        ItemDetailsScreen(backStackEntry = it)
                     }
                 }
                 composable("settings") {

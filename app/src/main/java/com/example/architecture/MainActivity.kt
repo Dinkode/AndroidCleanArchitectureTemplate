@@ -27,6 +27,7 @@ import com.example.architecture.common.utils.TokenManager
 import com.example.architecture.login.presentation.LoginViewModel
 import com.example.architecture.ui.theme.ArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.Exception
 
 val LocalSnackbarHostState = compositionLocalOf {
     SnackbarHostState()
@@ -58,16 +59,24 @@ class MainActivity : ComponentActivity(), HandleOnPause by HandleOnPauseImpl() {
                 LaunchedEffect(key1 = true) {
                     TokenManager(this@MainActivity).getToken().collect() {
                         if (!it.isNullOrBlank()) {
-                            navController.navigate("home-screens") {
-                                popUpTo("login-root") {
-                                    inclusive = true
+                            try {
+                                navController.navigate("homeScreens") {
+                                    popUpTo("loginScreens") {
+                                        inclusive = true
+                                    }
                                 }
+                            } catch (e: Exception) {
+                                e.stackTrace
                             }
                         } else {
-                            navController.navigate("login-screens") {
-                                popUpTo("home-screens") {
-                                    inclusive = true
+                            try {
+                                navController.navigate("loginScreens") {
+                                    popUpTo("homeScreens") {
+                                        inclusive = true
+                                    }
                                 }
+                            } catch (e: Exception) {
+                                e.stackTrace
                             }
                         }
                     }
@@ -79,18 +88,18 @@ class MainActivity : ComponentActivity(), HandleOnPause by HandleOnPauseImpl() {
                             SnackbarHost(hostState = LocalSnackbarHostState.current)
                         }
                     ) {
-                        NavHost(navController = navController, startDestination = "login-screens") {
-                            navigation(startDestination = "login-root", route = "login-screens") {
+                        NavHost(navController = navController, startDestination = "loginScreens") {
+                            navigation(startDestination = "loginRoot", route = "loginScreens") {
 
-                                composable("login-root") {
+                                composable("loginRoot") {
                                     val viewModel = it.sharedViewModel<LoginViewModel>(navHostController = navController)
                                     AuthenticationScreens(
                                         viewModel
                                     )
                                 }
                             }
-                            navigation(startDestination = "home-root", route = "home-screens") {
-                                composable("home-root") {
+                            navigation(startDestination = "homeRoot", route = "homeScreens") {
+                                composable("homeRoot") {
                                     MainScreens()
                                 }
                             }

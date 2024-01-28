@@ -4,5 +4,5 @@ import com.example.architecture.items.domain.models.ItemDetailsModel
 
 data class ItemDetailsState(
     var data: ItemDetailsModel?,
-    val isLoading: Boolean
+    var isLoading: Boolean
 )

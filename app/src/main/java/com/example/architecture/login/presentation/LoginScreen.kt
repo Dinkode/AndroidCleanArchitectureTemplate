@@ -1,8 +1,11 @@
 package com.example.architecture.login.presentation
 
+import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Button
@@ -17,10 +20,13 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.architecture.LocalSnackbarHostState
+import com.example.architecture.common.utils.UiEvent
 import com.example.architecture.utils.Fields
 import kotlinx.coroutines.flow.collectLatest
 
@@ -36,7 +42,7 @@ fun LoginScreen(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest {
             when(it) {
-                is LoginViewModel.UiEvent.ShowSnackbar -> {
+                is UiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(it.message)
                 }
 
@@ -59,15 +65,15 @@ fun LoginScreen(
             viewModel.login()
             controller?.hide()
         },
-            modifier = Modifier.width(90.dp)
         ) {
+            
             if (viewModel.isLoading) {
                 CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.size(20.dp).padding(end = 5.dp)
                 )
-            } else {
-                Text(text = "Login")
             }
+                Text(text = "Login", fontSize = TextUnit(15F, TextUnitType.Sp))
 
         }
 

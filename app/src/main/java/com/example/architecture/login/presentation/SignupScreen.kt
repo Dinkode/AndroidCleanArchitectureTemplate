@@ -33,7 +33,7 @@ fun SignupScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextField(value = viewModel.fieldsState[Fields.FIRST_NAME] ?: "", label = { Text(text = "First Name")}, onValueChange = { viewModel.onFieldChange(Fields.FIRST_NAME, it) })
-            TextField(value = viewModel.fieldsState[Fields.LAST_NAME] ?: "", label = { Text(text = "Last Name")}, visualTransformation = PasswordVisualTransformation(), onValueChange = { viewModel.onFieldChange(Fields.PASSWORD, it) })
+            TextField(value = viewModel.fieldsState[Fields.LAST_NAME] ?: "", label = { Text(text = "Last Name")}, onValueChange = { viewModel.onFieldChange(Fields.LAST_NAME, it) })
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(checked = viewModel.fieldsState[Fields.TERMS_AND_CONDITIONS].toBoolean(),
                     onCheckedChange = { viewModel.onFieldChange(Fields.TERMS_AND_CONDITIONS, it.toString()) })

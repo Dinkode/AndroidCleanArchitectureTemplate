@@ -14,5 +14,5 @@ fun ItemsDto.toItemModelMap(): List<ItemModel> {
 }
 
 fun ItemDetailsDto.toItemDetailsModelMap(): ItemDetailsModel {
-    return ItemDetailsModel(id, itemName, itemName)
+    return ItemDetailsModel(id, title, description, images)
     }
