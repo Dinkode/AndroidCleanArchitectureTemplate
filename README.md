@@ -7,6 +7,7 @@ Impleneted:
 - Retrofit
 - Hilt
 - Moshi
+- DataStore
 
 Features:
 DI, Default Splash Screen, API, Coroutines, Compose Navigation, Snakebar, Bottom Tab Bar, Validations
