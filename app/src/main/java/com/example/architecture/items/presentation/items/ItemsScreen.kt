@@ -26,19 +26,29 @@ fun ItemsScreen(
         .fillMaxSize()
         .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 
-        LazyColumn(
+        viewModel.items.value.data?.let {
+            LazyColumn(
 
-            content = {
-            items(viewModel.state.value.items)
-            { item ->
+                content = {
+                    items(it)
+                    { item ->
 
-                Button(onClick = {
-                    navController.navigate("items/${item.id}")
-                }) {
-                    Text(text = item.itemName, style = TextStyle(textAlign = TextAlign.Center, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color.Green))
-                }
+                        Button(onClick = {
+                            navController.navigate("items/${item.id}")
+                        }) {
+                            Text(
+                                text = item.itemName,
+                                style = TextStyle(
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    color = Color.Green
+                                )
+                            )
+                        }
 
-            }
-        })
+                    }
+                })
+        }
     }
 }

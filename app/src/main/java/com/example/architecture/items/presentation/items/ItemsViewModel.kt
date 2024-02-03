@@ -1,12 +1,10 @@
 package com.example.architecture.items.presentation.items
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.example.architecture.BaseViewModel
-import com.example.architecture.items.data.apiServices.ItemsDto
-import com.example.architecture.items.data.mappers.toItemModelMap
+import com.example.architecture.common.utils.BaseRequestState
+import com.example.architecture.items.domain.models.ItemModel
 import com.example.architecture.items.domain.use_cases.ItemUseCases
-import com.example.architecture.items.domain.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,33 +13,17 @@ import javax.inject.Inject
 class ItemsViewModel @Inject constructor(
     private val useCases: ItemUseCases,
 ): BaseViewModel() {
-    private val _state = mutableStateOf(ItemsState(emptyList(), true))
-    val state: State<ItemsState> = _state
+
+    private val _items = mutableStateOf<BaseRequestState<List<ItemModel>>>(BaseRequestState(null, false, ""))
+    val items = _items
 
     init {
         getItems()
     }
 
-    private fun getItemsHandler (data: Resource<ItemsDto>) {
-        when (data) {
-            is Resource.Success -> {
-                data.data?.toItemModelMap()?.let {
-                    _state.value = ItemsState(showButton = false, items = it)
-                }
-            }
-
-            is Resource.Error -> {
-
-
-            }
-
-            else -> {}
-        }
-    }
-
     private fun getItems () {
         viewModelScope.launch {
-            baseRequest({ getItemsHandler(it) }, null) {
+            baseRequest(_items, null, null) {
                 useCases.getItems()
             }
         }

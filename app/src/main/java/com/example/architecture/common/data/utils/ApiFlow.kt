@@ -31,3 +31,7 @@ fun<T> apiFlow(call: suspend () -> Response<T>): Flow<Resource<T>> = flow {
         }
     } ?: emit(Resource.Error("Timeout! Please try again.", null))
 }.flowOn(Dispatchers.IO)
+
+fun<T, W> Flow<T>.toModel(callback: () -> W):Flow<W> {
+    return flow { callback() }
+}

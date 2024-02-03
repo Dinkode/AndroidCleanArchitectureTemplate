@@ -1,7 +1,11 @@
 package com.example.architecture
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -11,9 +15,9 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.core.app.ActivityCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -23,11 +27,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.example.architecture.common.utils.TokenManager
+import com.example.architecture.common.data.utils.LocalVpnService
 import com.example.architecture.login.presentation.LoginViewModel
 import com.example.architecture.ui.theme.ArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.Exception
 
 val LocalSnackbarHostState = compositionLocalOf {
     SnackbarHostState()
@@ -38,11 +41,24 @@ class MainActivity : ComponentActivity(), HandleOnPause by HandleOnPauseImpl() {
 
     private val viewModel:MainViewModel by viewModels()
 
+    fun startVpnService () {
+        Log.d("VPN", "Start")
+        Intent(this, LocalVpnService::class.java).also {
+            it.action = "START_VPN_SERVICE"
+            this.startService(it)
+        }
+    }
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
+
         register(this)
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+        }
         super.onCreate(savedInstanceState)
+
 
         installSplashScreen().apply {
             setKeepOnScreenCondition {
@@ -50,37 +66,13 @@ class MainActivity : ComponentActivity(), HandleOnPause by HandleOnPauseImpl() {
             }
         }
 
+
         setContent {
             val snackbarHostState = LocalSnackbarHostState.current
+
             ArchitectureTheme {
                 val navController = rememberNavController()
 
-
-                LaunchedEffect(key1 = true) {
-                    TokenManager(this@MainActivity).getToken().collect() {
-                        if (!it.isNullOrBlank()) {
-                            try {
-                                navController.navigate("homeScreens") {
-                                    popUpTo("loginScreens") {
-                                        inclusive = true
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                e.stackTrace
-                            }
-                        } else {
-                            try {
-                                navController.navigate("loginScreens") {
-                                    popUpTo("homeScreens") {
-                                        inclusive = true
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                e.stackTrace
-                            }
-                        }
-                    }
-                }
                 CompositionLocalProvider (LocalSnackbarHostState provides snackbarHostState) {
 
                     Scaffold(
@@ -93,14 +85,13 @@ class MainActivity : ComponentActivity(), HandleOnPause by HandleOnPauseImpl() {
 
                                 composable("loginRoot") {
                                     val viewModel = it.sharedViewModel<LoginViewModel>(navHostController = navController)
-                                    AuthenticationScreens(
-                                        viewModel
-                                    )
+
+                                    AuthenticationScreens(navController, viewModel)
                                 }
                             }
                             navigation(startDestination = "homeRoot", route = "homeScreens") {
                                 composable("homeRoot") {
-                                    MainScreens()
+                                    MainScreens(navController)
                                 }
                             }
 
@@ -110,6 +101,7 @@ class MainActivity : ComponentActivity(), HandleOnPause by HandleOnPauseImpl() {
             }
         }
     }
+
 }
 
 @Composable

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import coil.compose.AsyncImage
+import com.example.architecture.items.domain.models.ItemDetailsModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -22,6 +23,7 @@ fun ItemDetailsScreen(
     viewModel: ItemDetailsViewModel = hiltViewModel(),
     backStackEntry: NavBackStackEntry
 ) {
+    val itemDetailsState = viewModel.itemDetails.value
     LaunchedEffect(key1 = true) {
         val id = backStackEntry.arguments?.getString("id")
         withContext(Dispatchers.IO) {
@@ -29,7 +31,7 @@ fun ItemDetailsScreen(
         }
 
     }
-    if (viewModel.state.isLoading) {
+    if (itemDetailsState.isLoading) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -39,10 +41,10 @@ fun ItemDetailsScreen(
         }
     } else {
     Column {
-        Text(text = viewModel.state.data?.title ?: "")
-        Text(text = viewModel.state.data?.description ?: "")
+        Text(text = itemDetailsState.data?.title ?: "")
+        Text(text = itemDetailsState.data?.description ?: "")
 
-        viewModel.state.data?.images?.forEach {
+        itemDetailsState.data?.images?.forEach {
             AsyncImage(
                 model = it,
                 contentDescription = null,

@@ -1,14 +1,11 @@
 package com.example.architecture
 
 import android.app.Application
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service
 import android.content.Context
 import android.os.Build
 import dagger.hilt.android.HiltAndroidApp
-import java.security.Provider
 
 @HiltAndroidApp
 class ArchitectureApp: Application() {
